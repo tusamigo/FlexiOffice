@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react'
@@ -15,7 +14,14 @@ export function AIAdvisor() {
   const { user } = useUser()
   const db = useFirestore()
   
-  const today = format(new Date(), 'yyyy-MM-dd')
+  const [today, setToday] = useState('');
+  const [displayDay, setDisplayDay] = useState('');
+
+  useEffect(() => {
+    const now = new Date();
+    setToday(format(now, 'yyyy-MM-dd'));
+    setDisplayDay(format(now, 'EEEE'));
+  }, []);
   
   const userProfileRef = useMemoFirebase(() => {
     if (!user || !db) return null;
@@ -25,12 +31,12 @@ export function AIAdvisor() {
   const { data: profile } = useDoc(userProfileRef)
 
   const presenceQuery = useMemoFirebase(() => {
-    if (!db) return null
+    if (!db || !today) return null
     return query(collection(db, 'presence'), where('date', '==', today))
   }, [db, today])
 
   const meetingsQuery = useMemoFirebase(() => {
-    if (!db) return null
+    if (!db || !today) return null
     return query(collection(db, 'meetings'), where('date', '==', today))
   }, [db, today])
 
@@ -41,7 +47,7 @@ export function AIAdvisor() {
   const [recommendation, setRecommendation] = useState<WorkspaceAdvisorOutput | null>(null)
 
   const fetchRecommendation = async () => {
-    if (!user || !profile || !presences) return
+    if (!user || !profile || !presences || !today) return
     
     setAiLoading(true)
     try {
@@ -72,12 +78,12 @@ export function AIAdvisor() {
   }
 
   useEffect(() => {
-    if (profile && presences && meetings !== null) {
+    if (profile && presences && meetings !== null && today) {
       fetchRecommendation()
     }
-  }, [profile, presences, meetings])
+  }, [profile, presences, meetings, today])
 
-  const isLoading = presencesLoading || meetingsLoading || aiLoading
+  const isLoading = !today || presencesLoading || meetingsLoading || aiLoading
   const isIntegrated = profile?.integrations?.calendarSynced || profile?.integrations?.hrisSynced;
 
   return (
@@ -101,7 +107,7 @@ export function AIAdvisor() {
           )}
         </div>
         <CardDescription>
-          Personalized recommendation for {format(new Date(), 'EEEE')}
+          Personalized recommendation for {displayDay || '...'}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 min-h-[250px] flex flex-col justify-center">

@@ -19,15 +19,17 @@ export function FirebaseClientProvider({ children }: { children: React.ReactNode
     setServices(initialized);
   }, []);
 
-  if (!services) return null;
-
+  // During SSR or before initialization, we provide a placeholder context
+  // but still render children to avoid blank pages and hydration mismatches.
   return (
     <FirebaseProvider
-      firebaseApp={services.firebaseApp}
-      firestore={services.firestore}
-      auth={services.auth}
+      firebaseApp={services?.firebaseApp as FirebaseApp}
+      firestore={services?.firestore as Firestore}
+      auth={services?.auth as Auth}
     >
-      {children}
+      <div className={!services ? 'opacity-0' : 'opacity-100 transition-opacity duration-300'}>
+        {children}
+      </div>
     </FirebaseProvider>
   );
 }
