@@ -1,0 +1,101 @@
+
+{
+  "entities": {
+    "Resource": {
+      "title": "Resource",
+      "description": "An office resource such as a desk, meeting room, or parking spot.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["Desk", "MeetingRoom", "Parking", "EVCharger"] },
+        "status": { "type": "string", "enum": ["Available", "Limited", "Full", "Maintenance"] },
+        "capacity": { "type": "number" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        },
+        "availability": {
+          "type": "object",
+          "properties": {
+            "startTime": { "type": "string" },
+            "endTime": { "type": "string" },
+            "isWeekendBookable": { "type": "boolean" }
+          }
+        }
+      },
+      "required": ["name", "type", "status", "location"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Extended user data including vehicle and commute information.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "isAdmin": { "type": "boolean" },
+        "commuteDistanceKm": { "type": "number" },
+        "vehicle": {
+          "type": "object",
+          "properties": {
+            "licensePlate": { "type": "string" },
+            "make": { "type": "string" },
+            "model": { "type": "string" },
+            "isEV": { "type": "boolean" }
+          }
+        },
+        "flexPoints": { "type": "number" },
+        "co2SavedKg": { "type": "number" },
+        "wfhStreak": { "type": "number" }
+      }
+    },
+    "OrgSettings": {
+      "title": "OrgSettings",
+      "description": "Global organization policies for hybrid work.",
+      "type": "object",
+      "properties": {
+        "maxInOfficeDays": { "type": "number" },
+        "anchorDays": { "type": "array", "items": { "type": "string" } },
+        "autoReleaseUnusedBookings": { "type": "boolean" },
+        "requireCheckIn": { "type": "boolean" }
+      }
+    },
+    "AnalyticsSnapshot": {
+      "title": "AnalyticsSnapshot",
+      "description": "Aggregated data for reporting.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "totalCo2Saved": { "type": "number" },
+        "avgOccupancy": { "type": "number" },
+        "flexPointsDistributed": { "type": "number" }
+      }
+    }
+  },
+  "auth": {
+    "providers": ["google.com"]
+  },
+  "firestore": {
+    "/resources/{resourceId}": {
+      "schema": "Resource",
+      "description": "Collection of all bookable office resources."
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile data."
+    },
+    "/orgSettings/{settingsId}": {
+      "schema": "OrgSettings",
+      "description": "Global configuration."
+    },
+    "/analytics/{snapshotId}": {
+      "schema": "AnalyticsSnapshot",
+      "description": "Historical snapshots for reports."
+    }
+  }
+}

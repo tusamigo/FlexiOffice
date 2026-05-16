@@ -1,0 +1,23 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-workspace",
+      "description": "Modern minimalist workspace",
+      "imageUrl": "https://picsum.photos/seed/flexnest1/1200/600",
+      "imageHint": "modern workspace"
+    },
+    {
+      "id": "team-collaboration",
+      "description": "Team collaborating in a bright office",
+      "imageUrl": "https://picsum.photos/seed/flexnest2/800/400",
+      "imageHint": "team collaboration"
+    },
+    {
+      "id": "nature-sustainability",
+      "description": "Green forest representing CO2 savings",
+      "imageUrl": "https://picsum.photos/seed/flexnest3/600/400",
+      "imageHint": "green forest"
+    }
+  ]
+}
